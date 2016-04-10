@@ -72,14 +72,14 @@
 				}
 			});	
 	}
-
+    
 	function updateContent(collection)
 	{
 		var colors = ['#1abc9c', '#8B2E24', '#3498DB'];
-
+        
 		//display title,description and url
 		document.getElementById("title").innerHTML = collection.title;
-		document.getElementById("description").innerHTML = collection.description;
+		document.getElementById("description").innerHTML = removeTags(collection.description);
 		document.getElementById("wikilink").href = collection.url;
 
 		//background for article
@@ -91,6 +91,11 @@
     {
        	 dataBuffer.push(collection);
 
+    }
+
+    function removeTags(str)
+    {
+    	 return $(str).text();
     }
 
     document.onkeydown = checkKey;
