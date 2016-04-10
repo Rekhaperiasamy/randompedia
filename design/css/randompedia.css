@@ -19,6 +19,7 @@
     color: white;
     font-family: play;
     font-size: 1.7em;
+	line-height:2em;
 }
 .jumbotron #wikilink:hover {
     text-decoration: none;
