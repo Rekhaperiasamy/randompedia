@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Randompedia</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href='http://fonts.googleapis.com/css?family=Play' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="../randompedia/design/css/randompedia.css">
+  <script src="../randompedia/design/js/jquery.min.js"></script>
+  <script src="../randompedia/design/js/randompedia.js"></script>
+</head>
+<body>
+        <div class="container">
+		   <div class="jumbotron"> 
+		   <div class="row">
+				 <div class="col-sm-4">
+				   <a href="" target="_blank" id="wikilink"><div class="title" id="title"></div></a>
+		   </div>
+		   </div>
+		   <div class="row">
+				<div class="col-sm-12">
+				<p id="description"><p>
+		   </div> 
+        </div>
+</body>
+<script type="text/javascript">
+
+  var dataBuffer = new Array();
+  var leftPressCounter = 0;
+
+  $(document).ready(function () 
+	{
+		fetchData();
+	});
+
+	function fetchData ()
+	{
+		 var articleUrl = 'https://en.wikipedia.org/w/api.php?action=query&generator=random&grnnamespace=0&prop=extracts&exchars=500&format=json';
+		 var title;
+		 var description;
+		 var url;
+		 var collection = {};
+		 
+		 $.ajax({
+				dataType: 'jsonp',
+				type:'GET',
+				url:articleUrl,
+				success: function(data)
+				{
+					var page = data.query.pages;
+					for(var i in page)
+					{
+						collection.title = page[i].title;
+						collection.description = page[i].extract;
+
+				        $.getJSON('http://en.wikipedia.org/w/api.php?action=query&prop=info&pageids='+ i +'&inprop=url&format=json&callback=?', 
+						function(url) 
+						{
+						var urlpage = url.query.pages;
+						for(var j in urlpage)
+						  {
+							collection.url = urlpage[j].fullurl;
+							updateContent(collection);
+					        bufferData(collection);
+						  }
+					    });  
+					}	                          
+				},
+				error: function(data)
+				{
+					alert("error" +data);
+				}
+			});	
+	}
+
+	function updateContent(collection)
+	{
+		var colors = ['#1abc9c', '#8B2E24', '#3498DB'];
+
+		//display title,description and url
+		document.getElementById("title").innerHTML = collection.title;
+		document.getElementById("description").innerHTML = collection.description;
+		document.getElementById("wikilink").href = collection.url;
+
+		//background for article
+		document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+	}
+
+    function bufferData(collection)
+    {
+       	 dataBuffer.push(collection);
+
+    }
+
+    document.onkeydown = checkKey;
+        function checkKey(e) 
+		 {
+				if (e.keyCode == '39') 
+				{
+					leftPressCounter = 0;
+					fetchData();
+
+		        }
+				if (e.keyCode == '37') 
+				{
+					leftPressCounter = leftPressCounter+1;
+					var dataBufferLen = dataBuffer.length;
+                    updateContent(dataBuffer[dataBufferLen-(leftPressCounter+1)]);
+
+		        }	
+		 }		
+
+</script>
+</html>
