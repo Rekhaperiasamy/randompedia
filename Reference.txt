@@ -1,0 +1,8 @@
+Reference Links:
+http://stackoverflow.com/questions/21486058/get-wikipedia-article-excluding-ones-with-title-in-a-list
+
+http://stackoverflow.com/questions/21064518/refresh-the-page-that-the-user-is-on-when-clicked-a-button-ajax
+
+http://stackoverflow.com/questions/23211006/change-background-color-on-refresh-with-vanilla-js
+
+http://stackoverflow.com/questions/20295235/getting-link-from-random-article
