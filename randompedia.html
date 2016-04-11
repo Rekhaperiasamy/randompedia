@@ -5,9 +5,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href='http://fonts.googleapis.com/css?family=Play' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="../Randompedia/design/css/randompedia.css">
-  <script src="../Randompedia/design/js/jquery.min.js"></script>
-  <script src="../Randompedia/design/js/randompedia.js"></script>
+  <link rel="stylesheet" href="design/css/randompedia.css">
+  <script src="design/js/hammer.min.js"></script>
+  <script src="design/js/hammer-time.min.js"></script>
+  <script src="design/js/jquery.min.js"></script>
+  <script src="design/js/randompedia.js"></script>
+  <script src="design/js/jquery.hammer.js"></script>
 </head>
 <body>
         <div class="container">
@@ -78,6 +81,11 @@
 		var colors = ['#1abc9c', '#8B2E24', '#3498DB'];
 
 		//display title,description and url
+		var stitle = document.getElementsByTagName("body");
+		$(document.body).hammer().on("swipe",
+		function(event){
+		alert("swipe");
+		});
 		document.getElementById("title").innerHTML = collection.title;
 		document.getElementById("description").innerHTML = collection.description;
 		document.getElementById("wikilink").href = collection.url;

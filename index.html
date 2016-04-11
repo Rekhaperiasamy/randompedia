@@ -6,8 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href='http://fonts.googleapis.com/css?family=Play' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="design/css/randompedia.css">
+  <script src="design/js/hammer.min.js"></script>
+  <script src="design/js/hammer-time.min.js"></script>
   <script src="design/js/jquery.min.js"></script>
   <script src="design/js/randompedia.js"></script>
+  <script src="design/js/jquery.hammer.js"></script>
 </head>
 <body>
         <div class="container">
@@ -76,7 +79,7 @@
 	function updateContent(collection)
 	{
 		var colors = ['#1abc9c', '#8B2E24', '#3498DB'];
-        
+
 		//display title,description and url
 		document.getElementById("title").innerHTML = collection.title;
 		document.getElementById("description").innerHTML = removeTags(collection.description);
@@ -114,7 +117,21 @@
                     updateContent(dataBuffer[dataBufferLen-(leftPressCounter+1)]);
 
 		        }	
-		 }		
+		 }
+		 
+	 $(document.body).hammer().on("swipeleft",
+		 function(event)
+		 {
+		    leftPressCounter = 0;
+		    fetchData();
+		 });
 
+     $(document.body).hammer().on("swiperight",
+		 function(event)
+		 {
+		    leftPressCounter = leftPressCounter+1;
+			var dataBufferLen = dataBuffer.length;
+            updateContent(dataBuffer[dataBufferLen-(leftPressCounter+1)]);
+		 });		
 </script>
 </html>
