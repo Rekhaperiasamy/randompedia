@@ -141,7 +141,9 @@
      function(event)
      {
         leftPressCounter = 0;
-        fetchData();
+        rightPressCounter = rightPressCounter+1;
+        updateContent(dataBuffer[rightPressCounter]);
+        fetchData(false);
      });
 
      $(document.body).hammer().on("swiperight",
