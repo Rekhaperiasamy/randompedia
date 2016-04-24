@@ -6,40 +6,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href='http://fonts.googleapis.com/css?family=Play' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="design/css/randompedia.css">
+  <link rel="stylesheet" href="design/css/style.css">
   <script src="design/js/hammer.min.js"></script>
   <script src="design/js/hammer-time.min.js"></script>
   <script src="design/js/jquery.min.js"></script>
   <script src="design/js/randompedia.js"></script>
   <script src="design/js/jquery.hammer.js"></script>
+  
+  <script type="text/javascript">
+    $('.carousel').carousel();
+  </script>
+  
 </head>
 <body>
-    <div class="container">
-		   <div class="jumbotron"> 
-			   <div class="row">
-					 <div class="col-sm-4">
-					    <a href="" target="_blank" id="wikilink"><div class="title" id="title"></div></a>
-					 </div>
-			   </div>
-			   <div class="row">
-					<div class="col-sm-12">
-					    <p id="description"><p>
-				   </div> 
-			   </div>
-			</div>
-	</div>	
-			 
+    <div id="myCarousel" class="carousel slide" data-wrap="false">
+      <div id="carousel_inner" class="carousel-inner">
+      </div>
+    </div>			 
 </body>
 <script type="text/javascript">
 
   var dataBuffer = new Array();
-  var rightPressCounter = 0;
+  var bgImageCounter = 0;
+  var activeItemFlag = true;
+  var bgImages = ['design/images/1.jpg', 'design/images/2.jpg', 'design/images/3.jpg'];
 
   $(document).ready(function () 
   {
     initialLoad();
+	$('.carousel').carousel('pause');
   });
 
-  function fetchData(updateUi)
+  function fetchData()
   {
      var articleUrl = 'https://en.wikipedia.org/w/api.php?action=query&generator=random&grnnamespace=0&prop=extracts&exchars=500&format=json';
      var title;
@@ -58,20 +56,17 @@
             collection.title = page[i].title;
             collection.description = page[i].extract;
 
-                $.getJSON('http://en.wikipedia.org/w/api.php?action=query&prop=info&pageids='+ i +'&inprop=url&format=json&callback=?', 
+            $.getJSON('http://en.wikipedia.org/w/api.php?action=query&prop=info&pageids='+ i +'&inprop=url&format=json&callback=?', 
             function(url) 
             {
-            var urlpage = url.query.pages;
-            for(var j in urlpage)
-              {
-              collection.url = urlpage[j].fullurl;
-              if (updateUi==true)
-              {
-                updateContent(collection);
-              }
-              bufferData(collection);
-              }
-              });  
+				var urlpage = url.query.pages;
+				for(var j in urlpage)
+				{
+				  collection.url = urlpage[j].fullurl;
+				  updateContent(collection);
+				  bufferData(collection);
+			    }
+            });  
           }                           
         },
         error: function(data)
@@ -83,36 +78,43 @@
     
   function updateContent(collection)
   {
-    var colors = ['#1abc9c', '#8B2E24', '#3498DB'];
+    // Determine the background image
+    bgImageIndex = bgImageCounter%3;
+    
+    // Add new item div
+    var carouselItemDiv = document.createElement('div');
+    if(activeItemFlag == true)
+	{
+      carouselItemDiv.className = 'active item';
+      activeItemFlag = false;
+    }
+	else
+	{
+      carouselItemDiv.className = 'item';
+    }
 
-    //display title,description and url
-    document.getElementById("title").innerHTML = collection.title;
-    document.getElementById("description").innerHTML = removeTags(collection.description);
-    document.getElementById("wikilink").href = collection.url;
+    carouselItemDiv.innerHTML = '<div class="fill" style="background-image:url(' + bgImages[bgImageIndex] + ');">\
+                      <div class="container">\
+                        <a href="'+ collection.url +'" target="_blank" id="wikilink"><div class="title" id="title">'+ collection.title +'</div></a>\
+                        <p id="description">'+ removeTags(collection.description) +'</p>\
+                      </div>\
+                     </div>';
 
-    //background for article
-    document.body.style.background = colors[Math.floor(Math.random()*colors.length)];
-
+     document.getElementById('carousel_inner').appendChild(carouselItemDiv);
+     bgImageCounter += 1;
+	 
   }
 
     function initialLoad()
     {
       for(i=0;i<=4;i++)
       {
-        if(i==0)
-        {
-          fetchData(true);
-        }
-        else
-        {
-          fetchData(false);
-        }
+        fetchData();
       }
     }
     function bufferData(collection)
     {
-         dataBuffer.push(collection);
-
+       dataBuffer.push(collection);
     }
 
     function removeTags(str)
@@ -125,32 +127,26 @@
      {
         if (e.keyCode == '39') 
         {
-          rightPressCounter = rightPressCounter+1;
-          updateContent(dataBuffer[rightPressCounter]);
-          fetchData(false);
+          $("#myCarousel").carousel('next');
+          fetchData();
         }
         if (e.keyCode == '37') 
         {
-          rightPressCounter = rightPressCounter-1;
-          updateContent(dataBuffer[rightPressCounter]);
-		  fetchData(false);
+		  $("#myCarousel").carousel('prev');
         } 
      }
      
    $(document.body).hammer().on("swipeleft",
      function(event)
      {
-        rightPressCounter = rightPressCounter+1;
-        updateContent(dataBuffer[rightPressCounter]);
-        fetchData(false);
+        $("#myCarousel").carousel('next');
+        fetchData();
      });
 
      $(document.body).hammer().on("swiperight",
      function(event)
      {
-        rightPressCounter = rightPressCounter-1;
-        updateContent(dataBuffer[rightPressCounter]);
-		fetchData(false);
+		$("#myCarousel").carousel('prev');
      });    
 </script>
 </html>
